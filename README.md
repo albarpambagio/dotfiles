@@ -19,6 +19,7 @@ can be dropped onto a fresh install.
 | **Dev tools** | Mise (node, gh, opencode), Herdr (tmux-like), OpenCode |
 | **Audio** | PipeWire speaker EQ (laptop preset) |
 | **Systemd** | Google Calendar notify timer, Telegram weekday launch, Voxtype daemon |
+| **GPU** | AMD GPU kernel params: full power mgmt (`ppfeaturemask=0xffffffff`), GPU recovery |
 
 ### Machine-Specific Presets
 
@@ -27,7 +28,7 @@ pass a machine flag to the installer:
 
 | Preset | What It Adds |
 |--------|-------------|
-| `--laptop` | Dual-monitor layout, Synaptics touchpad tuning, 3/4-finger swipe gestures, PipeWire speaker EQ, EasyEffects device config |
+| `--laptop` | Dual-monitor layout, Synaptics touchpad tuning, 3/4-finger swipe gestures, PipeWire speaker EQ, EasyEffects device config, AMD GPU kernel params script |
 
 ## Prerequisites
 
@@ -76,6 +77,10 @@ mkdir -p ~/.local/state/omarchy/plugins/0xrichardh.gcal-events
 echo "https://calendar.google.com/calendar/ical/.../basic.ics" \
   > ~/.local/state/omarchy/plugins/0xrichardh.gcal-events/feed-url.txt
 chmod 600 ~/.local/state/omarchy/plugins/0xrichardh.gcal-events/feed-url.txt
+
+# 5. (Laptop with AMD GPU only) Set GPU kernel parameters
+sudo ./machines/laptop/boot/set-amd-gpu-params.sh
+# Then reboot
 ```
 
 ## Repository Structure
@@ -108,7 +113,9 @@ dotfiles/
 │   └── laptop/                 # Laptop-specific presets
 │       ├── hypr/               # Monitors, input, bindings
 │       ├── pipewire/           # Speaker EQ
-│       └── easyeffects/        # Audio device config
+│       ├── systemd/user/       # Speaker EQ service
+│       ├── easyeffects/        # Audio device config
+│       └── boot/               # AMD GPU kernel params (manual)
 └── ...
 ```
 
