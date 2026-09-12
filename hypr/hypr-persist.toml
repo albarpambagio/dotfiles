@@ -1,0 +1,9 @@
+[general]
+save_interval = 120
+restore_on_start = true
+per_window_launch = true
+restore_geometry = true
+restore_layout = true
+
+[logging]
+level = "info"

@@ -1,0 +1,16 @@
+[Unit]
+Description=Google Calendar notification check
+After=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/omarchy-gcal-notify
+Environment=HOME=%h
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/%U/bus
+Environment=WAYLAND_DISPLAY=wayland-1
+Environment=DISPLAY=:0
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

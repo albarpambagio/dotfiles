@@ -1,0 +1,6 @@
+[Unit]
+Description=Launch Telegram Desktop
+
+[Service]
+Type=oneshot
+ExecStart=/home/albar/.local/bin/telegram-autostart.sh

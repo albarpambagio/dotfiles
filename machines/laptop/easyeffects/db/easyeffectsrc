@@ -1,0 +1,10 @@
+[StreamInputs]
+inputDevice=default
+visiblePage=pluginsPage
+
+[StreamOutputs]
+outputDevice=default
+visiblePage=pluginsPage
+
+[Window]
+height=400

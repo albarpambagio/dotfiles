@@ -1,0 +1,22 @@
+# Secrets — never commit bearer tokens, keys, or credentials
+**/feed-url.txt
+**/*.secret
+**/*.key
+**/*.pem
+*.env
+
+# Runtime / state files
+*.log
+*.sock
+*.bak.*
+*.swp
+*~
+node_modules/
+package-lock.json
+release-notes.json
+session.json
+gcal-notify-state.json
+
+# OS artifacts
+.DS_Store
+Thumbs.db

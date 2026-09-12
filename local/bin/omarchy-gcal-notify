@@ -1,0 +1,216 @@
+#!/usr/bin/env python3
+"""Google Calendar desktop notifications for Omarchy.
+
+Reads the iCal feed URL from the gcal-events plugin state file,
+fetches upcoming events, and sends desktop notifications via
+omarchy-notification-send for events starting soon.
+"""
+
+import json
+import os
+import re
+import subprocess
+import sys
+import urllib.request
+from datetime import datetime, timezone
+from pathlib import Path
+
+FEED_URL_PATH = Path.home() / ".local/state/omarchy/plugins/0xrichardh.gcal-events/feed-url.txt"
+STATE_PATH = Path.home() / ".local/state/omarchy/gcal-notify-state.json"
+
+# hyprctl notify: <icon> <time_ms> <color> <message>
+# Icons: 0=Warning, 1=Info, 2=Hint, 3=Error, 5=Ok
+NOTIFY_WINDOWS = [
+    (60, "low",      1, 8000),   # Info icon, 8s
+    (15, "normal",   2, 10000),  # Hint icon, 10s
+    (5,  "critical", 0, 15000),  # Warning icon, 15s
+]
+
+# How close (in minutes) to a window center to trigger
+WINDOW_TOLERANCE = 3
+
+
+def load_feed_url():
+    if not FEED_URL_PATH.exists():
+        return None
+    url = FEED_URL_PATH.read_text().strip()
+    return url if url else None
+
+
+def fetch_ical(url):
+    req = urllib.request.Request(url, headers={"User-Agent": "omarchy-gcal-notify/1.0"})
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            return resp.read().decode("utf-8", errors="replace")
+    except Exception as e:
+        print(f"Failed to fetch feed: {e}", file=sys.stderr)
+        return None
+
+
+def unfold_lines(raw):
+    lines = raw.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+    result = []
+    for line in lines:
+        if line and line[0] in (" ", "\t") and result:
+            result[-1] += line[1:]
+        elif line:
+            result.append(line)
+    return result
+
+
+def parse_events(ical_text):
+    events = []
+    lines = unfold_lines(ical_text)
+    in_event = False
+    ev = {}
+
+    for line in lines:
+        colon = line.find(":")
+        if colon == -1:
+            continue
+        key_part = line[:colon]
+        value = line[colon + 1:]
+        bare_key = key_part.split(";")[0].upper()
+
+        if bare_key == "BEGIN" and value.strip().upper() == "VEVENT":
+            in_event = True
+            ev = {}
+        elif bare_key == "END" and value.strip().upper() == "VEVENT":
+            in_event = False
+            if "dtstart" in ev:
+                events.append(ev)
+        elif in_event:
+            if bare_key == "DTSTART":
+                ev["dtstart_raw"] = value
+                ev["dtstart"] = parse_datetime(value, key_part)
+            elif bare_key == "SUMMARY":
+                ev["title"] = value.replace("\\n", "\n").replace("\\,", ",").replace("\\\\", "\\")
+            elif bare_key == "LOCATION":
+                ev["location"] = value.replace("\\n", "\n").replace("\\,", ",")
+
+    return events
+
+
+def parse_datetime(value, full_key=""):
+    value = value.strip()
+    # All-day event: 20260910
+    if re.match(r"^\d{8}$", value):
+        y, m, d = int(value[:4]), int(value[4:6]), int(value[6:8])
+        dt = datetime(y, m, d, 0, 0, 0)
+        return dt.replace(tzinfo=datetime.now().astimezone().tzinfo)
+    # Timed event: 20260910T143000Z or 20260910T143000
+    m = re.match(r"^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z)?$", value)
+    if not m:
+        return None
+    y, mo, d, h, mi, s = (int(m.group(i)) for i in range(1, 7))
+    if m.group(7) == "Z":
+        dt = datetime(y, mo, d, h, mi, s, tzinfo=timezone.utc)
+    else:
+        dt = datetime(y, mo, d, h, mi, s)
+        dt = dt.replace(tzinfo=datetime.now().astimezone().tzinfo)
+    return dt
+
+
+def load_state():
+    if STATE_PATH.exists():
+        try:
+            return json.loads(STATE_PATH.read_text())
+        except (json.JSONDecodeError, OSError):
+            pass
+    return {}
+
+
+def save_state(state):
+    STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    STATE_PATH.write_text(json.dumps(state, indent=2))
+
+
+def send_notification(title, body, urgency, icon, duration_ms):
+    # hyprctl notify: <icon> <time_ms> <color> <message>
+    # color 0 = default color for icon
+    message = f"{title}\n{body}" if body else title
+    cmd = ["hyprctl", "notify", str(icon), str(duration_ms), "0", message]
+    try:
+        result = subprocess.run(cmd, timeout=5, capture_output=True, text=True)
+        return result.returncode == 0 and "ok" in result.stdout.lower()
+    except Exception as e:
+        print(f"Notification failed: {e}", file=sys.stderr)
+        return False
+
+
+def event_key(ev):
+    dt = ev.get("dtstart")
+    if dt:
+        return dt.isoformat()
+    return ev.get("title", "unknown")
+
+
+def main():
+    url = load_feed_url()
+    if not url:
+        print("No feed URL configured", file=sys.stderr)
+        sys.exit(0)
+
+    ical_text = fetch_ical(url)
+    if not ical_text:
+        sys.exit(1)
+
+    events = parse_events(ical_text)
+    now = datetime.now(tz=datetime.now().astimezone().tzinfo)
+    state = load_state()
+    today_key = now.strftime("%Y-%m-%d")
+
+    # Clean up old state entries (older than 2 days)
+    cleaned = {}
+    for k, v in state.items():
+        try:
+            dt = datetime.fromisoformat(k)
+            if (now - dt).total_seconds() < 2 * 86400:
+                cleaned[k] = v
+        except (ValueError, TypeError):
+            pass
+    state = cleaned
+
+    notified_any = False
+
+    for ev in events:
+        dtstart = ev.get("dtstart")
+        if not dtstart or dtstart.tzinfo is None:
+            # Make timezone-aware if not already
+            if dtstart:
+                dtstart = dtstart.replace(tzinfo=now.tzinfo)
+            else:
+                continue
+
+        if dtstart < now:
+            continue
+
+        minutes_until = (dtstart - now).total_seconds() / 60
+        ek = event_key(ev)
+
+        for window_min, urgency, icon, duration_ms in NOTIFY_WINDOWS:
+            if abs(minutes_until - window_min) <= WINDOW_TOLERANCE:
+                already = state.get(ek, [])
+                if urgency in already:
+                    continue
+
+                title = ev.get("title", "Untitled Event")
+                loc = ev.get("location", "")
+                body = f"Starts in {int(minutes_until)} minutes"
+                if loc:
+                    body += f"\n{loc}"
+
+                if send_notification(title, body, urgency, icon, duration_ms):
+                    state.setdefault(ek, []).append(urgency)
+                    notified_any = True
+
+    save_state(state)
+
+    if notified_any:
+        print(f"Sent notifications at {now.strftime('%H:%M')}")
+    else:
+        print(f"No notifications needed at {now.strftime('%H:%M')}")
+
+
+if __name__ == "__main__":
+    main()
