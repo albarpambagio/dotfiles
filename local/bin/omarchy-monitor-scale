@@ -1,0 +1,150 @@
+#!/bin/bash
+# Scale a monitor and recalculate positions to keep layout correct.
+# Usage: omarchy-monitor-scale [up|down|SCALE]
+
+EXTERNAL="HDMI-A-1"
+LAPTOP="eDP-1"
+SCALES=(1 1.25 1.6 2 3 4)
+MONITOR_LUA="$HOME/.config/hypr/monitors.lua"
+
+get_info() {
+  hyprctl monitors -j | jq -r ".[] | select(.name == \"$1\") | \"\(.width) \(.height) \(.refreshRate) \(.scale)\""
+}
+
+clean_scale() {
+  awk -v scale="$1" -v width="$2" -v height="$3" '
+    function gcd(a, b, t) { while (b) { t = a % b; a = b; b = t } return a }
+    BEGIN {
+      g = gcd(width * 120, height * 120)
+      k = int(scale * 120 + 0.5)
+      if (k > g) k = g
+      while (g % k != 0) k++
+      printf "%g\n", k / 120
+    }'
+}
+
+next_scale() {
+  local current="$1" width="$2" height="$3" direction="$4"
+  local best="" best_diff=999
+
+  for s in "${SCALES[@]}"; do
+    local clean
+    clean=$(clean_scale "$s" "$width" "$height")
+    local diff
+    diff=$(awk "BEGIN { d = $clean - $current; if (d < 0) d = -d; print d }")
+    local closer
+    closer=$(awk "BEGIN { print ($diff < $best_diff) ? 1 : 0 }")
+    if [[ "$closer" == "1" ]]; then
+      best_diff="$diff"
+      best="$clean"
+    fi
+  done
+
+  local found=0
+  if [[ "$direction" == "down" ]]; then
+    local prev=""
+    for s in "${SCALES[@]}"; do
+      local clean
+      clean=$(clean_scale "$s" "$width" "$height")
+      if [[ "$clean" == "$best" ]]; then
+        if [[ -n "$prev" ]]; then
+          echo "$prev"
+          return
+        fi
+        break
+      fi
+      prev="$clean"
+    done
+    echo "${SCALES[0]}"
+  else
+    for s in "${SCALES[@]}"; do
+      local clean
+      clean=$(clean_scale "$s" "$width" "$height")
+      if [[ "$clean" == "$best" ]]; then
+        found=1
+        continue
+      fi
+      if [[ "$found" == "1" ]]; then
+        echo "$clean"
+        return
+      fi
+    done
+    echo "${SCALES[-1]}"
+  fi
+}
+
+persist_scale() {
+  local target="$1" new_scale="$2"
+
+  if [[ ! -f "$MONITOR_LUA" ]]; then
+    return
+  fi
+
+  # Get current external monitor info for position calculation
+  local ext_w ext_h ext_rr ext_scale
+  read -r ext_w ext_h ext_rr ext_scale <<< "$(get_info "$EXTERNAL")"
+
+  # Use new scale if scaling external, otherwise use current scale
+  local eff_ext_scale="$ext_scale"
+  if [[ "$target" == "$EXTERNAL" ]]; then
+    eff_ext_scale="$new_scale"
+  fi
+
+  # Calculate laptop position based on external's effective width
+  local lap_x
+  lap_x=$(awk "BEGIN { printf \"%d\", $ext_w / $eff_ext_scale }")
+
+  # Update target monitor's scale
+  sed -i -E "/output = \"$target\"/{ s/scale = [0-9]+(\.[0-9]+)?/scale = $new_scale/ }" "$MONITOR_LUA"
+
+  # Update laptop position
+  sed -i -E "/output = \"$LAPTOP\"/{ s/position = \"[0-9]+x[0-9]+\"/position = \"${lap_x}x0\"/ }" "$MONITOR_LUA"
+}
+
+apply_scale() {
+  local target="$1" new_scale="$2"
+
+  local ext_w ext_h ext_rr ext_scale
+  read -r ext_w ext_h ext_rr ext_scale <<< "$(get_info "$EXTERNAL")"
+
+  local lap_w lap_h lap_rr lap_scale
+  read -r lap_w lap_h lap_rr lap_scale <<< "$(get_info "$LAPTOP")"
+
+  local lap_x
+  lap_x=$(awk "BEGIN { printf \"%d\", $ext_w / $ext_scale }")
+
+  if [[ "$target" == "$EXTERNAL" ]]; then
+    hyprctl eval "hl.monitor({ output = \"$EXTERNAL\", mode = \"${ext_w}x${ext_h}@${ext_rr}\", position = \"0x0\", scale = $new_scale }); hl.monitor({ output = \"$LAPTOP\", mode = \"${lap_w}x${lap_h}@${lap_rr}\", position = \"${lap_x}x0\", scale = $lap_scale })" >/dev/null
+  else
+    hyprctl eval "hl.monitor({ output = \"$EXTERNAL\", mode = \"${ext_w}x${ext_h}@${ext_rr}\", position = \"0x0\", scale = $ext_scale }); hl.monitor({ output = \"$LAPTOP\", mode = \"${lap_w}x${lap_h}@${lap_rr}\", position = \"${lap_x}x0\", scale = $new_scale })" >/dev/null
+  fi
+}
+
+case "${1:-}" in
+  "")
+    hyprctl monitors -j | jq -r '.[] | select(.focused == true) | .scale'
+    ;;
+  up|down)
+    focused=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true) | .name')
+    info=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true)')
+    current_scale=$(echo "$info" | jq -r '.scale')
+    width=$(echo "$info" | jq -r '.width')
+    height=$(echo "$info" | jq -r '.height')
+
+    new_scale=$(next_scale "$current_scale" "$width" "$height" "$1")
+
+    # Persist to config BEFORE applying (prevents clamshell sync from reverting)
+    persist_scale "$focused" "$new_scale"
+    apply_scale "$focused" "$new_scale"
+    ;;
+  *)
+    focused=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true) | .name')
+    info=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true)')
+    width=$(echo "$info" | jq -r '.width')
+    height=$(echo "$info" | jq -r '.height')
+    new_scale=$(clean_scale "$1" "$width" "$height")
+
+    persist_scale "$focused" "$new_scale"
+    apply_scale "$focused" "$new_scale"
+    ;;
+esac

@@ -12,13 +12,14 @@ can be dropped onto a fresh install.
 | **Bar** | Transparent bar, Google Calendar widget, media + Tailscale widgets |
 | **Plugins** | `0xrichardh.gcal-events` — next event + agenda popup + Join links |
 | **Notifications** | Desktop calendar alerts at 60/15/5 min before events |
-| **Themes** | Custom Catppuccin Mocha-inspired theme (`wallhaven-d8dokj`) |
+| **Themes** | Custom Catppuccin Mocha-inspired theme (`wallhaven-d8dokj`), custom ASCII art branding |
 | **Hooks** | Post-update invites for Voxtype, agent setup, fingerprint |
 | **Terminals** | Foot with iA Writer Mono S font |
 | **Editor** | Neovim (LazyVim), Zed with custom Omazed theme |
 | **Dev tools** | Mise (node, gh, opencode), Herdr (tmux-like), OpenCode |
-| **Audio** | PipeWire speaker EQ (laptop preset) |
-| **Systemd** | Google Calendar notify timer, Telegram weekday launch, Voxtype daemon |
+| **Audio** | PipeWire speaker EQ, Bluetooth A2DP auto-connect (laptop preset) |
+| **Scripts** | Monitor scale, per-monitor workspace switch, Telegram autostart |
+| **Systemd** | hyprsunset, calendar notify, Telegram weekday launch, Voxtype daemon |
 | **GPU** | AMD GPU kernel params: full power mgmt (`ppfeaturemask=0xffffffff`), GPU recovery |
 
 ### Machine-Specific Presets
@@ -98,7 +99,7 @@ dotfiles/
 │   ├── hooks/                  # Automation hooks
 │   ├── plugins/                # Bar plugins (gcal-events)
 │   └── themes/                 # Custom themes
-├── local/bin/                  # Custom scripts
+├── local/bin/                  # Custom scripts (gcal-notify, monitor-scale, workspace-switch)
 ├── foot/                       # Foot terminal
 ├── git/                        # Git config (name/email)
 ├── nvim/                       # Neovim (LazyVim)
@@ -108,6 +109,9 @@ dotfiles/
 ├── mise/                       # Dev tool versions
 ├── fontconfig/                 # Font preferences
 ├── aether/                     # Aether theme engine
+├── wireplumber/                # Bluetooth A2DP auto-connect
+├── omarchy/branding/           # Custom ASCII art branding
+├── imv/                        # Image viewer keybindings
 ├── systemd/user/               # User services
 ├── machines/
 │   └── laptop/                 # Laptop-specific presets

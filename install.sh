@@ -155,6 +155,21 @@ backup_and_link "$DOTFILES_DIR/tmux/tmux.conf" "$CONFIG_DIR/tmux/tmux.conf"
 # XDG
 backup_and_link "$DOTFILES_DIR/mimeapps.list"    "$CONFIG_DIR/mimeapps.list"
 backup_and_link "$DOTFILES_DIR/xdg-terminals.list" "$CONFIG_DIR/xdg-terminals.list"
+backup_and_link "$DOTFILES_DIR/user-dirs.dirs"   "$CONFIG_DIR/user-dirs.dirs"
+
+# WirePlumber
+mkdir -p "$CONFIG_DIR/wireplumber/wireplumber.conf.d"
+backup_and_link "$DOTFILES_DIR/wireplumber/wireplumber.conf.d/bluetooth-a2dp-autoconnect.conf" \
+                "$CONFIG_DIR/wireplumber/wireplumber.conf.d/bluetooth-a2dp-autoconnect.conf"
+
+# Omarchy branding
+mkdir -p "$CONFIG_DIR/omarchy/branding"
+backup_and_link "$DOTFILES_DIR/omarchy/branding/about.txt"      "$CONFIG_DIR/omarchy/branding/about.txt"
+backup_and_link "$DOTFILES_DIR/omarchy/branding/screensaver.txt" "$CONFIG_DIR/omarchy/branding/screensaver.txt"
+
+# imv
+mkdir -p "$CONFIG_DIR/imv"
+backup_and_link "$DOTFILES_DIR/imv/config" "$CONFIG_DIR/imv/config"
 
 # nwg-look
 mkdir -p "$CONFIG_DIR/nwg-look"
@@ -164,14 +179,15 @@ backup_and_link "$DOTFILES_DIR/nwg-look/config" "$CONFIG_DIR/nwg-look/config"
 mkdir -p "$CONFIG_DIR/systemd/user"
 for svc in omarchy-gcal-notify.service omarchy-gcal-notify.timer \
            telegram-autostart.service telegram-autostart.timer \
-           voxtype.service; do
+           voxtype.service hyprsunset.service; do
   backup_and_link "$DOTFILES_DIR/systemd/user/$svc" \
                   "$CONFIG_DIR/systemd/user/$svc"
 done
 
 # Custom scripts in ~/.local/bin
-backup_and_link "$DOTFILES_DIR/local/bin/omarchy-gcal-notify" \
-                "$LOCAL_BIN/omarchy-gcal-notify"
+for script in omarchy-gcal-notify omarchy-monitor-scale omarchy-workspace-switch telegram-autostart.sh; do
+  backup_and_link "$DOTFILES_DIR/local/bin/$script" "$LOCAL_BIN/$script"
+done
 
 ok "Universal configs linked."
 

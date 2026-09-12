@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Per-monitor workspace switcher.
+# Maps SUPER+1-9 to workspace 1-10 on HDMI-A-1 (left) or 11-20 on eDP-1 (right).
+# Usage: omarchy-workspace-switch <number>
+#        omarchy-workspace-switch move <number>
+
+set -euo pipefail
+
+MOVE=false
+if [[ "${1:-}" == "move" ]]; then
+  MOVE=true
+  shift
+fi
+
+WS_NUM="${1:?Usage: $0 [move] <workspace-number>}"
+
+# Detect focused monitor
+FOCUSED=$(hyprctl monitors -j | jq -r '.[] | select(.focused) | .name')
+
+case "$FOCUSED" in
+  HDMI-A-1) OFFSET=0 ;;
+  eDP-1)    OFFSET=10 ;;
+  *)        OFFSET=0 ;;
+esac
+
+TARGET=$((WS_NUM + OFFSET))
+
+if $MOVE; then
+  hyprctl dispatch "hl.dsp.window.move({workspace='${TARGET}'})"
+else
+  hyprctl dispatch "hl.dsp.focus({workspace='${TARGET}'})"
+fi
