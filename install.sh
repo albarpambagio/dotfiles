@@ -75,6 +75,20 @@ info "Linking universal configs..."
 backup_and_link "$DOTFILES_DIR/hypr/autostart.lua"    "$CONFIG_DIR/hypr/autostart.lua"
 backup_and_link "$DOTFILES_DIR/hypr/hyprsunset.conf"   "$CONFIG_DIR/hypr/hyprsunset.conf"
 backup_and_link "$DOTFILES_DIR/hypr/hypr-persist.toml" "$CONFIG_DIR/hypr/hypr-persist.toml"
+backup_and_link "$DOTFILES_DIR/hypr/autoscroll.lua"    "$CONFIG_DIR/hypr/autoscroll.lua"
+
+# hypr-autoscroll plugin (build from source if not present)
+if [ ! -f "$HOME/.local/src/hypr-autoscroll/build/hypr-autoscroll.so" ]; then
+  info "Building hypr-autoscroll plugin..."
+  if command -v git &>/dev/null && command -v g++ &>/dev/null; then
+    git clone --depth 1 https://github.com/estebanhiram/hypr-autoscroll \
+      "$HOME/.local/src/hypr-autoscroll" 2>/dev/null || true
+    make -C "$HOME/.local/src/hypr-autoscroll" clean all test && \
+      ok "hypr-autoscroll built." || warn "hypr-autoscroll build failed — install manually"
+  else
+    warn "git or g++ not found — install hypr-autoscroll manually"
+  fi
+fi
 
 # Omarchy shell, defaults, hooks
 backup_and_link "$DOTFILES_DIR/omarchy/shell.json"  "$CONFIG_DIR/omarchy/shell.json"
@@ -242,4 +256,5 @@ echo "    2. Reload systemd:      systemctl --user daemon-reload"
 echo "    3. Enable notify timer: systemctl --user enable --now omarchy-gcal-notify.timer"
 echo "    4. Paste your Google Calendar feed URL into:"
 echo "       ~/.local/state/omarchy/plugins/0xrichardh.gcal-events/feed-url.txt"
+echo "    5. Middle-button scroll: SUPER+A to toggle autoscroll mode"
 echo ""
