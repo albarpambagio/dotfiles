@@ -2,7 +2,8 @@
 
 Personal [Omarchy](https://omarchy.org/) configuration — a curated set of
 keybindings, bar widgets, theming, automation hooks, and tool configs that
-can be dropped onto a fresh install.
+can be dropped onto a fresh install. Fork it, strip what you don't need,
+and make it yours.
 
 ## What's Included
 
@@ -69,17 +70,24 @@ omarchy restart shell
 # 2. Reload systemd user services
 systemctl --user daemon-reload
 
-# 3. Enable the calendar notification timer
+# 3. Enable hyprsunset (night light) — managed by systemd, not autostart
+systemctl --user enable --now hyprsunset.service
+
+# 4. Enable the calendar notification timer
 systemctl --user enable --now omarchy-gcal-notify.timer
 
-# 4. Set up Google Calendar (paste your secret iCal address)
+# 5. Set up Google Calendar (paste your secret iCal address)
 #    Either click the bar pill or manually create the file:
 mkdir -p ~/.local/state/omarchy/plugins/0xrichardh.gcal-events
 echo "https://calendar.google.com/calendar/ical/.../basic.ics" \
   > ~/.local/state/omarchy/plugins/0xrichardh.gcal-events/feed-url.txt
 chmod 600 ~/.local/state/omarchy/plugins/0xrichardh.gcal-events/feed-url.txt
 
-# 5. (Laptop with AMD GPU only) Set GPU kernel parameters
+# 6. Set your git identity (git/config has placeholders)
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+
+# 7. (Laptop with AMD GPU only) Set GPU kernel parameters
 sudo ./machines/laptop/boot/set-amd-gpu-params.sh
 # Then reboot
 ```
@@ -143,9 +151,12 @@ excluded via `.gitignore`:
    ```bash
    mkdir -p machines/my-machine/{hypr,pipewire}
    ```
-2. Copy hardware-specific configs into it
-3. Run: `./install.sh --my-machine`
-4. Add the flag to `install.sh`'s `case` statement
+2. Copy hardware-specific configs into it (monitors, input, audio)
+3. Add the flag to `install.sh`'s `case` statement:
+   ```bash
+   --my-machine) MACHINE="my-machine" ;;
+   ```
+4. Run: `./install.sh --my-machine`
 
 ### Updating the Plugin
 
