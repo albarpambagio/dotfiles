@@ -505,23 +505,19 @@ function formatBarLabel(nextEvent, nowMs) {
 // shelling out to curl. Not exhaustive — the real validation is the first
 // fetch actually succeeding.
 function validateFeedUrl(text) {
-  var lines = String(text || "").trim().split(/?
-/).filter(function(l) { return l.trim() !== "" })
-  if (lines.length === 0) return "Paste your calendar's secret iCal address first."
-  for (var i = 0; i < lines.length; i++) {
-    var v = lines[i].trim()
-    if (!/^https:///i.test(v)) return "URL #" + (i + 1) + " doesn't start with https://."
-    if (!/^https://calendar.google.com/calendar/ical//i.test(v)) {
-      return "URL #" + (i + 1) + " is not a Google Calendar iCal link."
-    }
-    if (/^https://calendar.google.com/calendar/ical/[^/]+/public//i.test(v)) {
-      return "URL #" + (i + 1) + " is the Public address — use the Secret address instead."
-    }
-    if (!/^https://calendar.google.com/calendar/ical/[^/]+/private-/i.test(v)) {
-      return "URL #" + (i + 1) + " doesn't contain private- — use the Secret address."
-    }
-    if (!/.ics$/i.test(v)) return "URL #" + (i + 1) + " should end in .ics."
+  var v = String(text || "").trim()
+  if (v === "") return "Paste your calendar's secret iCal address first."
+  if (!/^https:\/\//i.test(v)) return "That doesn't look like a URL — it should start with https://."
+  if (!/^https:\/\/calendar\.google\.com\/calendar\/ical\//i.test(v)) {
+    return "That's not a Google Calendar iCal link. Copy the “Secret address in iCal format” from Settings → Integrate calendar."
   }
+  if (/^https:\/\/calendar\.google\.com\/calendar\/ical\/[^/]+\/public\//i.test(v)) {
+    return "That's the Public address — it only works if the calendar is public. Use the Secret address instead, just above it."
+  }
+  if (!/^https:\/\/calendar\.google\.com\/calendar\/ical\/[^/]+\/private-/i.test(v)) {
+    return "That doesn't look like the Secret address — it should contain “private-” in the path."
+  }
+  if (!/\.ics$/i.test(v)) return "The link should end in .ics — check you copied the whole address."
   return ""
 }
 
