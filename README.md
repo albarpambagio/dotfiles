@@ -9,7 +9,7 @@ and make it yours.
 
 | Category | Configs |
 |----------|---------|
-| **Hyprland** | Night light (hyprsunset), window layout persistence (hypr-persist), autostart apps |
+| **Hyprland** | Night light (hyprsunset), window layout persistence (hypr-persist), middle-button autoscroll, autostart apps |
 | **Bar** | Transparent bar, Google Calendar widget, media + Tailscale widgets |
 | **Plugins** | `0xrichardh.gcal-events` — next event + agenda popup + Join links |
 | **Notifications** | Desktop calendar alerts at 60/15/5 min before events |
@@ -53,9 +53,11 @@ cd ~/dotfiles
 ```
 
 The installer:
-1. **Backs up** any existing config files (appends `.bak.<timestamp>`)
-2. **Symlinks** all configs from this repo into `~/.config/`
-3. **Links** custom scripts into `~/.local/bin/`
+1. **Checks dependencies** — detects missing apps and offers to install them via pacman/yay
+2. **Backs up** any existing config files (appends `.bak.<timestamp>`)
+3. **Symlinks** all configs from this repo into `~/.config/`
+4. **Links** custom scripts into `~/.local/bin/`
+5. **Builds** hypr-autoscroll plugin from source if not present
 
 Nothing is deleted — existing files are preserved with timestamped backups.
 
@@ -90,6 +92,9 @@ git config --global user.email "you@example.com"
 # 7. (Laptop with AMD GPU only) Set GPU kernel parameters
 sudo ./machines/laptop/boot/set-amd-gpu-params.sh
 # Then reboot
+
+# 8. Middle-button autoscroll: press SUPER+A to toggle
+#    Hold middle-click and drag to scroll (like Windows)
 ```
 
 ## Repository Structure
@@ -99,6 +104,7 @@ dotfiles/
 ├── install.sh                  # Symlink installer
 ├── hypr/                       # Hyprland configs (universal)
 │   ├── autostart.lua
+│   ├── autoscroll.lua
 │   ├── hyprsunset.conf
 │   └── hypr-persist.toml
 ├── omarchy/

@@ -4,8 +4,9 @@ Dotfiles repo for Omarchy (Arch Linux + Hyprland). Symlinks configs into `~/.con
 
 ## Key Facts
 
-- `install.sh --laptop` creates symlinks from this repo to `~/.config/`. It backs up existing files but never deletes.
+- `install.sh --laptop` creates symlinks from this repo to `~/.config/`. It backs up existing files but never deletes. Checks for missing apps and offers to install them.
 - `machines/laptop/` contains hardware-specific configs (monitors, touchpad, speaker EQ, AMD GPU). These override universal configs when `--laptop` is passed.
+- `hypr/autoscroll.lua` configures middle-button autoscroll (SUPER+A toggle). Built from source at `~/.local/src/hypr-autoscroll/`.
 - `feed-url.txt` (Google Calendar secret) is excluded by `.gitignore`. Never commit it.
 - `git/config` has placeholder name/email — users set their own post-install.
 - hyprsunset is managed by systemd (`systemd/user/hyprsunset.service`), not Hyprland autostart.
