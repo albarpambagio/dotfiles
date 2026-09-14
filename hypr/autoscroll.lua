@@ -15,7 +15,7 @@ hl.config({
   plugin = {
     hypr_autoscroll = {
       enabled = true,
-      direct_activation = false,
+      direct_activation = true,
       dead_zone = 12.0,
       sensitivity = 4.0,
       acceleration = 1.075,
