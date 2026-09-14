@@ -1,8 +1,8 @@
 [Unit]
-Description=Launch Telegram on weekdays at 9 AM
+Description=Launch Telegram on weekdays at 8:45 AM
 
 [Timer]
-OnCalendar=Mon..Fri *-*-* 09:00:00
+OnCalendar=Mon..Fri *-*-* 08:45:00
 Persistent=true
 
 [Install]

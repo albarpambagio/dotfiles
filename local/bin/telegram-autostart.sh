@@ -4,6 +4,13 @@ export WAYLAND_DISPLAY=wayland-1
 export DISPLAY=:0
 export XDG_RUNTIME_DIR=/run/user/1000
 export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+export XDG_SESSION_TYPE=wayland
+export XDG_CURRENT_DESKTOP=Hyprland
+export QT_QPA_PLATFORM='wayland;xcb'
+export ELECTRON_OZONE_PLATFORM_HINT=wayland
+export GDK_BACKEND=wayland,x11,*
+export QT_IM_MODULE=fcitx
+export MOZ_ENABLE_WAYLAND=1
 
 LOG=/tmp/telegram-autostart.log
 
