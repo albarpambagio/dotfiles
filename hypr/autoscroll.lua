@@ -2,8 +2,13 @@
 -- Plugin: https://github.com/estebanhiram/hypr-autoscroll
 -- Build: make -C ~/.local/src/hypr-autoscroll clean all test
 
--- Load the plugin on startup (add to autostart.lua if not already there)
-hl.plugin.load(os.getenv("HOME") .. "/.local/src/hypr-autoscroll/build/hypr-autoscroll.so")
+local plugin_path = os.getenv("HOME") .. "/.local/src/hypr-autoscroll/build/hypr-autoscroll.so"
+
+-- Load plugin now (for hyprctl reload) and on fresh boot
+hl.plugin.load(plugin_path)
+hl.on("hyprland.start", function()
+  hl.plugin.load(plugin_path)
+end)
 
 -- Plugin config: start with middle button normal, press shortcut to enable
 hl.config({
