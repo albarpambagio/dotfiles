@@ -71,7 +71,7 @@ info "Installing dotfiles from $DOTFILES_DIR"
 declare -A PACMAN_PKGS=(
   [foot]="foot" [nvim]="neovim" [btop]="btop" [tmux]="tmux"
   [imv]="imv" [mise]="mise" [hyprctl]="hyprland" [quickshell]="quickshell"
-  [zed]="zed"
+  [zeditor]="zed"
 )
 # AUR packages (binary name → yay package)
 declare -A AUR_PKGS=(
