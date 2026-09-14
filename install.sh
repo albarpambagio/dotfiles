@@ -65,6 +65,63 @@ fi
 info "Installing dotfiles from $DOTFILES_DIR"
 [ -n "$MACHINE" ] && info "Machine preset: $MACHINE"
 
+# ── Dependency check ─────────────────────────────────────────────────
+
+# Apps required by dotfiles configs (binary name → pacman package)
+declare -A PACMAN_PKGS=(
+  [foot]="foot" [nvim]="neovim" [btop]="btop" [tmux]="tmux"
+  [imv]="imv" [mise]="mise" [hyprctl]="hyprland" [quickshell]="quickshell"
+)
+# AUR packages (binary name → yay package)
+declare -A AUR_PKGS=(
+  [zed]="zed-editor" [herdr]="herdr" [voxtype]="voxtype"
+)
+
+missing_pacman=()
+missing_aur=()
+
+for bin in "${!PACMAN_PKGS[@]}"; do
+  command -v "$bin" &>/dev/null || missing_pacman+=("${PACMAN_PKGS[$bin]}")
+done
+for bin in "${!AUR_PKGS[@]}"; do
+  command -v "$bin" &>/dev/null || missing_aur+=("${AUR_PKGS[$bin]}")
+done
+
+if [ ${#missing_pacman[@]} -gt 0 ] || [ ${#missing_aur[@]} -gt 0 ]; then
+  warn "Missing apps detected:"
+  [ ${#missing_pacman[@]} -gt 0 ] && warn "  pacman: ${missing_pacman[*]}"
+  [ ${#missing_aur[@]} -gt 0 ]    && warn "  AUR:    ${missing_aur[*]}"
+
+  if [ -t 0 ]; then
+    printf '\033[1;33mInstall missing apps now? [Y/n]\033[0m '
+    read -r answer
+    answer="${answer:-Y}"
+  else
+    answer="Y"
+  fi
+
+  if [[ "$answer" =~ ^[Yy] ]]; then
+    if [ ${#missing_pacman[@]} -gt 0 ]; then
+      info "Installing pacman packages..."
+      sudo pacman -S --needed --noconfirm "${missing_pacman[@]}" && \
+        ok "pacman packages installed." || warn "Some pacman installs failed"
+    fi
+    if [ ${#missing_aur[@]} -gt 0 ]; then
+      if command -v yay &>/dev/null; then
+        info "Installing AUR packages..."
+        yay -S --needed --noconfirm "${missing_aur[@]}" && \
+          ok "AUR packages installed." || warn "Some AUR installs failed"
+      else
+        warn "yay not found — install AUR packages manually: ${missing_aur[*]}"
+      fi
+    fi
+  else
+    warn "Skipping app installation. Configs will be symlinked anyway."
+  fi
+else
+  ok "All required apps found."
+fi
+
 mkdir -p "$CONFIG_DIR" "$LOCAL_BIN"
 
 # ── Universal configs ────────────────────────────────────────────────
