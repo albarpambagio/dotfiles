@@ -9,7 +9,7 @@
 # ("idle", "recording", "transcribing") to this file whenever it changes.
 # Required for `voxtype record toggle` and `voxtype status` commands.
 state_file = "auto"
-engine = "parakeet"
+engine = "cohere"
 
 [hotkey]
 # Hotkey is configured in Hyprland. Default is Super + Ctrl + X
@@ -38,12 +38,6 @@ pause_media = true
 #
 # Volume level (0.0 to 1.0)
 # volume = 0.7
-
-engine = "parakeet"
-
-[parakeet]
-# Parakeet TDT 0.6B v3 - fast CPU inference (~30x real-time)
-model = "parakeet-tdt-0.6b-v3-int8"
 
 [whisper]
 model = "small.en"
@@ -91,3 +85,6 @@ on_transcription = false
 #
 # Custom word replacements (case-insensitive)
 # replacements = { "hyperwhisper" = "hyprwhspr" }
+
+[cohere]
+model = "cohere-transcribe-q4f16"
