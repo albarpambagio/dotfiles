@@ -134,6 +134,7 @@ backup_and_link "$DOTFILES_DIR/hypr/autostart.lua"    "$CONFIG_DIR/hypr/autostar
 backup_and_link "$DOTFILES_DIR/hypr/hyprsunset.conf"   "$CONFIG_DIR/hypr/hyprsunset.conf"
 backup_and_link "$DOTFILES_DIR/hypr/hypr-persist.toml" "$CONFIG_DIR/hypr/hypr-persist.toml"
 backup_and_link "$DOTFILES_DIR/hypr/autoscroll.lua"    "$CONFIG_DIR/hypr/autoscroll.lua"
+backup_and_link "$DOTFILES_DIR/hypr/looknfeel.lua"      "$CONFIG_DIR/hypr/looknfeel.lua"
 
 # hypr-autoscroll plugin (build from source if not present)
 if [ ! -f "$HOME/.local/src/hypr-autoscroll/build/hypr-autoscroll.so" ]; then
