@@ -39,7 +39,7 @@ o.bind("SUPER + TAB", "Next workspace (this monitor)", hl.dsp.focus({ workspace 
 o.bind("SUPER + SHIFT + TAB", "Previous workspace (this monitor)", hl.dsp.focus({ workspace = "m-1" }))
 
 -- Hyprexpo: workspace overview toggle
-hl.bind("SUPER + G", function() hl.plugin.hyprexpo.expo("toggle") end, { description = "Workspace overview" })
+o.bind("SUPER + G", "Workspace overview", function() hl.plugin.hyprexpo.expo("toggle") end)
 
 -- Per-monitor SUPER+1-9: script detects focused monitor and routes to correct range
 -- HDMI-A-1 (left):  1-10
