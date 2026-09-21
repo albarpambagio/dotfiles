@@ -1,3 +1,23 @@
 {
+  "ssh_connections": [
+    {
+      "host": "100.122.51.73",
+      "username": "sunaryo",
+      "args": [],
+      "projects": [
+        {
+          "paths": [
+            "/home/sunaryo/sunaryo/albar/accountability"
+          ]
+        },
+        {
+          "paths": [
+            "/home/sunaryo/sunaryo/albar/framework-app/./"
+          ]
+        }
+      ]
+    }
+  ],
+  "cli_default_open_behavior": "existing_window",
   "theme": "Omazed"
 }
