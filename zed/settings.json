@@ -14,6 +14,11 @@
           "paths": [
             "/home/sunaryo/sunaryo/albar/framework-app/./"
           ]
+        },
+        {
+          "paths": [
+            "/home/sunaryo/sunaryo/albar/pipeline-itf/./"
+          ]
         }
       ]
     }
