@@ -53,8 +53,12 @@ hl.device({
   name = "synps/2-synaptics-touchpad",
   scroll_factor = 1.5,
   disable_while_typing = false,
-  sensitivity = 0.8,
   natural_scroll = true,
+
+  -- Cursor feel: "flat" turns off acceleration so motion tracks your finger
+  -- 1:1 instead of speeding up as you flick. sensitivity is -1..1, 0 = neutral.
+  accel_profile = "flat",
+  sensitivity = 0,
 })
 
 -- Workspace swipe gesture tuning (easier to trigger on PS/2 touchpad).
