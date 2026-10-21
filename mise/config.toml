@@ -1,4 +1,5 @@
 [tools]
+gcloud = "587.0.0"
 gh = "latest"
 node = "26.8.1"
 opencode = "latest"
