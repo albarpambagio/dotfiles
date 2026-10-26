@@ -1,0 +1,15 @@
+[Unit]
+Description=DC blocker feed for HushMic (Mic1 has a huge DC offset)
+After=pipewire.service wireplumber.service
+Requires=pipewire.service
+Wants=wireplumber.service
+PartOf=pipewire.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/pipewire -c /home/albar/.config/pipewire/mic-dc.conf
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=graphical-session.target

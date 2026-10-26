@@ -294,6 +294,19 @@ if [ -n "$MACHINE" ]; then
                     "$CONFIG_DIR/systemd/user/speaker-eq.service"
   fi
 
+  # Microphone DC blocker (Mic1 has a huge DC offset that breaks
+  # denoiser models - they gate the real voice. See mic-dc.conf.)
+  if [ -f "$MACHINE_DIR/pipewire/mic-dc.conf" ]; then
+    mkdir -p "$CONFIG_DIR/pipewire"
+    backup_and_link "$MACHINE_DIR/pipewire/mic-dc.conf" \
+                    "$CONFIG_DIR/pipewire/mic-dc.conf"
+  fi
+
+  if [ -f "$MACHINE_DIR/systemd/user/mic-dc.service" ]; then
+    backup_and_link "$MACHINE_DIR/systemd/user/mic-dc.service" \
+                    "$CONFIG_DIR/systemd/user/mic-dc.service"
+  fi
+
   # EasyEffects
   if [ -f "$MACHINE_DIR/easyeffects/db/easyeffectsrc" ]; then
     mkdir -p "$CONFIG_DIR/easyeffects/db"
@@ -316,4 +329,8 @@ echo "    3. Enable notify timer: systemctl --user enable --now omarchy-gcal-not
 echo "    4. Paste your Google Calendar feed URL into:"
 echo "       ~/.local/state/omarchy/plugins/0xrichardh.gcal-events/feed-url.txt"
 echo "    5. Middle-button scroll: SUPER+A to toggle autoscroll mode"
+echo "    6. Mic denoise (HushMic + DC blocker):"
+echo "       paru -S hushmic-bin        # AUR"
+echo "       hushmic config set mic mic_dc && hushmic config set set_default true"
+echo "       systemctl --user enable --now mic-dc.service hushmic.service"
 echo ""
