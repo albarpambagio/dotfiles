@@ -60,9 +60,9 @@ hl.unbind("SUPER + G")
 o.bind("SUPER + G", "Workspace overview", function() hl.plugin.hyprexpo.expo("toggle") end)
 o.bind("SUPER + CTRL + G", "Toggle window grouping", hl.dsp.group.toggle())
 
--- Per-monitor SUPER+1-9: script detects focused monitor and routes to correct range
--- HDMI-A-1 (left):  1-10
--- eDP-1 (right):    11-20
+-- Per-monitor SUPER+1-0: the script reads the focused monitor's block from
+-- ~/.local/state/omarchy/monitor-workspaces, so the panel's 1-10 and the
+-- external monitor's 11-20 stay correct whatever the connectors are named.
 local number_keys = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" }
 for i, nk in ipairs(number_keys) do
   local ws = (i - 1) % 10 + 1
