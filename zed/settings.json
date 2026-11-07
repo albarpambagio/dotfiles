@@ -1,28 +1,4 @@
 {
-  "ssh_connections": [
-    {
-      "host": "REDACTED",
-      "username": "REDACTED",
-      "args": [],
-      "projects": [
-        {
-          "paths": [
-            "/home/user/sunaryo/albar/accountability"
-          ]
-        },
-        {
-          "paths": [
-            "/home/user/sunaryo/albar/framework-app/./"
-          ]
-        },
-        {
-          "paths": [
-            "/home/user/sunaryo/albar/pipeline-itf/./"
-          ]
-        }
-      ]
-    }
-  ],
   "cli_default_open_behavior": "existing_window",
   "theme": "Omazed"
 }
