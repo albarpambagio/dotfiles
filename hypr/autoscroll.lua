@@ -26,5 +26,7 @@ hl.config({
   },
 })
 
--- Toggle shortcut: SUPER + A
-o.bind("SUPER + A", "Toggle middle-button autoscroll", "hyprctl hypr-autoscroll toggle")
+-- Toggle shortcut: SUPER + ALT + A
+-- (SUPER + A is Omarchy's "Select all" and SUPER + SHIFT + A launches ChatGPT,
+-- so binding either fired two things on every press.)
+o.bind("SUPER + ALT + A", "Toggle middle-button autoscroll", "hyprctl hypr-autoscroll toggle")
