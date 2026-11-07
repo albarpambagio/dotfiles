@@ -75,3 +75,10 @@ for i, nk in ipairs(number_keys) do
   hl.unbind("SUPER + SHIFT + ALT + code:" .. tostring(i + 9))
   o.bind("SUPER + SHIFT + ALT + " .. nk, "Send to workspace " .. ws .. " (this monitor), stay put", "omarchy-workspace-switch silent " .. ws)
 end
+
+-- Dictation keys from before Alt + Space and Right Alt became the defaults.
+-- Remove these lines to give the keys back to applications.
+if o.dictation_installed and o.dictation_installed() then
+  o.bind("SUPER + CTRL + X", "Toggle dictation", "omarchy-dictation toggle")
+  o.bind_hold("F9", "Start dictation (push-to-talk)", "omarchy-dictation start", "Stop dictation (push-to-talk)", "omarchy-dictation stop")
+end
