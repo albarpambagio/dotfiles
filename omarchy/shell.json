@@ -7,7 +7,6 @@
   "bar": {
     "position": "top",
     "transparent": true,
-    "centerAnchor": "omarchy.clock",
     "layout": {
       "left": [
         {
@@ -19,33 +18,21 @@
       ],
       "center": [
         {
-          "id": "omarchy.indicators"
+          "id": "omarchy.clock",
+          "format": "dddd HH:mm",
+          "formatAlt": "d MMMM 'W'ww yyyy",
+          "verticalFormat": "HH\n—\nmm"
+        }
+      ],
+      "right": [
+        {
+          "id": "omarchy.tray"
         },
         {
           "id": "omarchy.keyboard-layout"
         },
         {
-          "id": "omarchy.clock",
-          "format": "dddd HH:mm",
-          "formatAlt": "d MMMM 'W'ww yyyy",
-          "verticalFormat": "HH\n—\nmm"
-        },
-        {
-          "id": "omarchy.weather"
-        },
-        {
-          "id": "0xrichardh.gcal-events"
-        },
-        {
-          "id": "omarchy.system-update"
-        }
-      ],
-      "right": [
-        {
           "id": "omarchy.media"
-        },
-        {
-          "id": "omarchy.tray"
         },
         {
           "id": "omarchy.tailscale"
@@ -67,6 +54,47 @@
         },
         {
           "id": "omarchy.power"
+        }
+      ],
+      "centerBegin": [
+        {
+          "id": "omarchy.indicators"
+        }
+      ],
+      "centerEnd": [
+        {
+          "id": "omarchy.elsewhen",
+          "cities": [
+            {
+              "name": "Jakarta",
+              "zone": "Asia/Jakarta"
+            },
+            {
+              "name": "Los Angeles",
+              "zone": "America/Los_Angeles"
+            },
+            {
+              "name": "New York",
+              "zone": "America/New_York"
+            },
+            {
+              "name": "London",
+              "zone": "Europe/London"
+            },
+            {
+              "name": "Dubai",
+              "zone": "Asia/Dubai"
+            }
+          ]
+        },
+        {
+          "id": "omarchy.weather"
+        },
+        {
+          "id": "0xrichardh.gcal-events"
+        },
+        {
+          "id": "omarchy.system-update"
         }
       ]
     }
