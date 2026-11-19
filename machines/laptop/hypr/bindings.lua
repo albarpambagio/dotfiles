@@ -78,10 +78,11 @@ end
 
 -- Dictation keys from before Alt + Space and Right Alt became the defaults.
 -- Remove these lines to give the keys back to applications.
--- Alt + Space opens the window menu in some apps: titlebar buttons appear and
--- the text caret loses focus. Release it and use Ctrl + Alt + D instead.
+-- Alt-based chords (Alt + Space, Ctrl + Alt + D) put apps into menu mode:
+-- titlebar buttons appear and the text caret loses focus. Use an Alt-free
+-- chord for dictation instead.
 hl.unbind("ALT + SPACE")
-o.bind("CTRL + ALT + D", "Toggle dictation", "omarchy-dictation toggle")
+o.bind("CTRL + SHIFT + D", "Toggle dictation", "omarchy-dictation toggle")
 if o.dictation_installed and o.dictation_installed() then
   o.bind("SUPER + CTRL + X", "Toggle dictation", "omarchy-dictation toggle")
   o.bind_hold("F9", "Start dictation (push-to-talk)", "omarchy-dictation start", "Stop dictation (push-to-talk)", "omarchy-dictation stop")
