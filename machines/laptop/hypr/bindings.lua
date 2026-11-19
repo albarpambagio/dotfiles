@@ -78,6 +78,9 @@ end
 
 -- Dictation keys from before Alt + Space and Right Alt became the defaults.
 -- Remove these lines to give the keys back to applications.
+-- Alt + Space is handled natively by Hex's own hotkey, so release Omarchy's
+-- binding to avoid two handlers cancelling each other out on one keypress.
+hl.unbind("ALT + SPACE")
 if o.dictation_installed and o.dictation_installed() then
   o.bind("SUPER + CTRL + X", "Toggle dictation", "omarchy-dictation toggle")
   o.bind_hold("F9", "Start dictation (push-to-talk)", "omarchy-dictation start", "Stop dictation (push-to-talk)", "omarchy-dictation stop")
