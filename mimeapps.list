@@ -7,3 +7,5 @@ x-scheme-handler/about=helium.desktop
 x-scheme-handler/unknown=helium.desktop
 x-scheme-handler/mailto=helium.desktop
 x-scheme-handler/webcal=helium.desktop
+x-scheme-handler/magpie=magpie.desktop
+x-scheme-handler/ccswitch=magpie-ccswitch.desktop
