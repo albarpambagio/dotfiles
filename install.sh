@@ -75,7 +75,7 @@ declare -A PACMAN_PKGS=(
 )
 # AUR packages (binary name → yay package)
 declare -A AUR_PKGS=(
-  [herdr]="herdr" [voxtype]="voxtype"
+  [herdr]="herdr"
 )
 
 missing_pacman=()
@@ -156,7 +156,7 @@ backup_and_link "$DOTFILES_DIR/omarchy/defaults/agent" "$CONFIG_DIR/omarchy/defa
 
 # Hooks
 mkdir -p "$CONFIG_DIR/omarchy/hooks/post-update.d" "$CONFIG_DIR/omarchy/hooks/theme-set.d"
-for hook in install-voxtype.hook setup-agent.hook setup-fingerprint.hook; do
+for hook in setup-agent.hook setup-fingerprint.hook; do
   backup_and_link "$DOTFILES_DIR/omarchy/hooks/post-update.d/$hook" \
                   "$CONFIG_DIR/omarchy/hooks/post-update.d/$hook"
 done
@@ -217,10 +217,6 @@ backup_and_link "$DOTFILES_DIR/aether" "$CONFIG_DIR/aether"
 # Btop
 backup_and_link "$DOTFILES_DIR/btop/btop.conf" "$CONFIG_DIR/btop/btop.conf"
 
-# Voxtype
-mkdir -p "$CONFIG_DIR/voxtype"
-backup_and_link "$DOTFILES_DIR/voxtype/config.toml" "$CONFIG_DIR/voxtype/config.toml"
-
 # Tmux
 mkdir -p "$CONFIG_DIR/tmux"
 backup_and_link "$DOTFILES_DIR/tmux/tmux.conf" "$CONFIG_DIR/tmux/tmux.conf"
@@ -252,7 +248,7 @@ backup_and_link "$DOTFILES_DIR/nwg-look/config" "$CONFIG_DIR/nwg-look/config"
 mkdir -p "$CONFIG_DIR/systemd/user"
 for svc in omarchy-gcal-notify.service omarchy-gcal-notify.timer \
            telegram-autostart.service telegram-autostart.timer \
-           voxtype.service hyprsunset.service; do
+           hyprsunset.service; do
   backup_and_link "$DOTFILES_DIR/systemd/user/$svc" \
                   "$CONFIG_DIR/systemd/user/$svc"
 done

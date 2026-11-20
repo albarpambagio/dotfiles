@@ -14,13 +14,13 @@ and make it yours.
 | **Plugins** | `0xrichardh.gcal-events` — next event + agenda popup + Join links |
 | **Notifications** | Desktop calendar alerts at 60/15/5 min before events |
 | **Themes** | Custom Catppuccin Mocha-inspired theme (`wallhaven-d8dokj`), custom ASCII art branding |
-| **Hooks** | Post-update invites for Voxtype, agent setup, fingerprint |
+| **Hooks** | Post-update invites for agent setup and fingerprint |
 | **Terminals** | Foot with iA Writer Mono S font |
 | **Editor** | Neovim (LazyVim), Zed with custom Omazed theme |
 | **Dev tools** | Mise (node, gh, opencode), Herdr (tmux-like), OpenCode |
 | **Audio** | PipeWire speaker EQ, Bluetooth A2DP auto-connect (laptop preset) |
 | **Scripts** | Monitor scale, per-monitor workspace switch, Telegram autostart |
-| **Systemd** | hyprsunset, calendar notify, Telegram weekday launch, Voxtype daemon |
+| **Systemd** | hyprsunset, calendar notify, Telegram weekday launch |
 | **GPU** | AMD GPU kernel params: full power mgmt (`ppfeaturemask=0xffffffff`), GPU recovery |
 
 ### Machine-Specific Presets
